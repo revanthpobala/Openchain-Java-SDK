@@ -1,7 +1,9 @@
 import com.authicate.exception.CustomException;
 import com.authicate.models.LedgerInfo;
 import com.authicate.models.TransactionData;
+import com.authicate.utils.MessageSerializer;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -27,20 +29,22 @@ public class APIClient {
      */
 
     public ByteString nameSpace;
-    private Unirest _httpClient;
     private static String urlString = null;
     private static String MEDIA_TYPE = "application/json";
+    final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
+    private MessageSerializer messageSerializer = new MessageSerializer();
 
-    /**
-     *
-     * @param baseUrl
-     */
-    public APIClient(String baseUrl) {
-        this.urlString = baseUrl;
+    public APIClient() {
     }
 
     /**
-     *
+     * @param baseUrl
+     */
+    public APIClient(String baseUrl) {
+        urlString = baseUrl;
+    }
+
+    /**
      * @return
      */
     public ByteString getNameSpace() {
@@ -48,7 +52,6 @@ public class APIClient {
     }
 
     /**
-     *
      * @param nameSpace
      */
     private void setNameSpace(ByteString nameSpace) {
@@ -56,6 +59,7 @@ public class APIClient {
     }
 
     /**
+     * Return a {@link ByteString} when a hex value is passed
      *
      * @param hexValue
      * @return
@@ -76,7 +80,6 @@ public class APIClient {
     }
 
     /**
-     *
      * @param hex
      * @return
      * @throws CustomException
@@ -90,8 +93,8 @@ public class APIClient {
             return value;
     }
 
+
     /**
-     *
      * @return
      * @throws CustomException
      */
@@ -131,7 +134,6 @@ public class APIClient {
     }
 
     /**
-     *
      * @param mutationHashObj
      * @return
      * @throws CustomException
@@ -146,16 +148,23 @@ public class APIClient {
         } else {
             throw new CustomException("Invalid Mutation Hash");
         }
-        GetRequest request = Unirest.get(urlString + "query/transaction").routeParam("format", "raw")
-                .routeParam("mutation_hash", mutationHash.toString()).header("Content-Type", MEDIA_TYPE);
+        GetRequest request = Unirest.get(urlString + "query/transaction?format=raw&mutation_hash=" + mutationHashObj.toString())
+                .header("Content-Type", MEDIA_TYPE);
         try {
             ObjectMapper mapper = new ObjectMapper();
             HttpResponse<JsonNode> response = request.asJson();
             if (response.getStatus() == 200) {
-                // TODO: Implement logic here.
+                String result = response.getBody().getObject().get("raw").toString();
+                ByteString buffer = parse(result);
+                messageSerializer.deserializeMutation(buffer);
+
+
+
             }
 
         } catch (UnirestException e) {
+            throw new CustomException("Unable to get transaction");
+        } catch (InvalidProtocolBufferException e) {
             throw new CustomException("Unable to get transaction");
         }
 
@@ -163,7 +172,6 @@ public class APIClient {
     }
 
     /**
-     *
      * @param mutation
      * @param signatures
      * @return
@@ -175,8 +183,10 @@ public class APIClient {
         data.put("signatures", signatures);
         try {
             String body = new ObjectMapper().writeValueAsString(data);
-            RequestBodyEntity request = Unirest.post(urlString+"submit/")
+            RequestBodyEntity request = Unirest.post(urlString + "submit/")
                     .header("Content-Type", MEDIA_TYPE).body(body);
+
+
         } catch (IOException e) {
             throw new CustomException("Bad Input" + e);
         }
@@ -184,5 +194,18 @@ public class APIClient {
         return false;
     }
 
+    /**
+     * @param bytes
+     * @return
+     */
+    public static String bytesToHex(byte[] bytes) {
+        char[] hexChars = new char[bytes.length * 2];
+        for (int j = 0; j < bytes.length; j++) {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = hexArray[v >>> 4];
+            hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars);
+    }
 
 }
