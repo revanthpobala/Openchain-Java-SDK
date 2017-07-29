@@ -11,6 +11,10 @@ public class SigningKey {
     @JsonProperty("signature")
     public String signature;
 
+    public SigningKey(String publicKey, String signature) {
+        this.publicKey = publicKey;
+        this.signature = signature;
+    }
 
     public String getPublicKey() {
         return publicKey;

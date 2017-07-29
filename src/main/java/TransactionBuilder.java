@@ -1,5 +1,7 @@
 import com.authicate.Openchain.Record;
 import com.authicate.exception.CustomException;
+import com.authicate.models.Mutation;
+import com.authicate.models.TransactionData;
 import com.authicate.utils.MessageSerializer;
 import com.google.protobuf.ByteString;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -20,7 +22,11 @@ public class TransactionBuilder {
     ObjectMapper mapper = new ObjectMapper();
     private MessageSerializer messageSerializer = new MessageSerializer();
 
-
+    /**
+     *
+     * @param apiClient
+     * @throws CustomException
+     */
     public TransactionBuilder(APIClient apiClient) throws CustomException {
         if (apiClient.getNameSpace() == null) {
             throw new CustomException("The API client has not been initialized");
@@ -31,6 +37,14 @@ public class TransactionBuilder {
         this.records = new ArrayList<>();
     }
 
+    /**
+     *
+     * @param key
+     * @param value
+     * @param version
+     * @return
+     * @throws IOException
+     */
     public TransactionBuilder addRecord(ByteString key, Object value, ByteString version) throws IOException {
         ByteString recordValue = null;
 
@@ -45,27 +59,57 @@ public class TransactionBuilder {
         return this;
     }
 
-
+    /**
+     *
+     * @param data
+     * @return
+     * @throws IOException
+     */
     public TransactionBuilder setMetaData(Object data) throws IOException {
         metaData = ByteString.copyFrom(Charset.forName("UTF-8").encode(mapper.writeValueAsString(data)));
         return this;
     }
 
+    /**
+     *
+     * @return
+     */
     public TransactionBuilder addAccountRecord() {
         return null;
     }
 
-
+    /**
+     *
+     * @param key
+     * @return
+     */
     public TransactionBuilder addSigningKey(MutationSigner key) {
         mutationSigners.add(key);
         return this;
     }
 
+    /**
+     *
+     * @return
+     * @throws CustomException
+     */
     public ByteString build() throws CustomException {
-        Object mutation = new com.authicate.models.Mutation(apiClient.getNameSpace(), records, metaData);
-        // TODO Figure out a way to get the mutation object.
-        //return ByteString.copyFrom(messageSerializer.SerializeMutation(mutation));
-        return null;
+        Mutation mutation = new com.authicate.models.Mutation(apiClient.getNameSpace(), records, metaData);
+        return ByteString.copyFrom(messageSerializer.SerializeMutation(mutation));
+    }
+
+    /**
+     *
+     * @return
+     * @throws CustomException
+     */
+    public TransactionData submit() throws CustomException {
+        ByteString mutation = build();
+        List<SigningKey> signatures = new ArrayList<>();
+        for (MutationSigner ms : mutationSigners) {
+            signatures.add(new SigningKey(ms.getPublicKey().toString(), ms.sign(mutation).toString()));
+        }
+        return apiClient.submitTransactionData(mutation, signatures);
     }
 
 }

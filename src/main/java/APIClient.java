@@ -17,6 +17,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -177,7 +178,7 @@ public class APIClient {
      * @return
      * @throws CustomException
      */
-    public boolean submitTransactionData(ByteString mutation, ArrayList<SigningKey> signatures) throws CustomException {
+    public TransactionData submitTransactionData(ByteString mutation, List<SigningKey> signatures) throws CustomException {
         Map<String, Object> data = new HashMap<>();
         data.put("mutation", mutation.toString());
         data.put("signatures", signatures);
@@ -191,7 +192,7 @@ public class APIClient {
             throw new CustomException("Bad Input" + e);
         }
 
-        return false;
+        return null;
     }
 
     /**
