@@ -3,6 +3,8 @@
 
 package com.authicate;
 
+import com.google.protobuf.ByteString;
+
 public final class Openchain {
     private Openchain() {
     }
@@ -544,13 +546,16 @@ public final class Openchain {
             version_ = com.google.protobuf.ByteString.EMPTY;
         }
 
+        public Record(ByteString key, ByteString recordValue, ByteString version) {
+        }
+
         @java.lang.Override
         public final com.google.protobuf.UnknownFieldSet
         getUnknownFields() {
             return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
         }
 
-        private Record(
+        public Record(
                 com.google.protobuf.CodedInputStream input,
                 com.google.protobuf.ExtensionRegistryLite extensionRegistry)
                 throws com.google.protobuf.InvalidProtocolBufferException {
