@@ -1,5 +1,7 @@
 import com.authicate.exception.CustomException;
 import com.authicate.models.LedgerInfo;
+import com.authicate.models.Mutation;
+import com.authicate.models.Transaction;
 import com.authicate.models.TransactionData;
 import com.authicate.utils.MessageSerializer;
 import com.google.protobuf.ByteString;
@@ -15,7 +17,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,6 +136,8 @@ public class APIClient {
     }
 
     /**
+     * Get the related transaction information when a mutation hash is passed.
+     *
      * @param mutationHashObj
      * @return
      * @throws CustomException
@@ -157,10 +160,13 @@ public class APIClient {
             if (response.getStatus() == 200) {
                 String result = response.getBody().getObject().get("raw").toString();
                 ByteString buffer = parse(result);
-                messageSerializer.deserializeMutation(buffer);
-
-
-
+                Transaction transaction = messageSerializer.deSerializeTransaction(buffer);
+                Mutation mutation = messageSerializer.deserializeMutation(transaction.getMutation());
+                byte[] transactionBuffer = buffer.toByteArray();
+                byte[] transactionHash = messageSerializer.computeHash(transactionBuffer);
+                TransactionData data = new TransactionData(transaction, mutation, transaction.getMutation().toString(),
+                        ByteString.copyFrom(transactionHash).toString());
+                return data;
             }
 
         } catch (UnirestException e) {
@@ -187,7 +193,7 @@ public class APIClient {
             RequestBodyEntity request = Unirest.post(urlString + "submit/")
                     .header("Content-Type", MEDIA_TYPE).body(body);
 
-
+            request.getBody();
         } catch (IOException e) {
             throw new CustomException("Bad Input" + e);
         }

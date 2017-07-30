@@ -3,7 +3,9 @@ package com.authicate.models;
 import com.authicate.Openchain.*;
 import com.authicate.exception.CustomException;
 import com.google.protobuf.ByteString;
+import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class Mutation {
 
 
     private ByteString nameSpace;
-    private List<Record> records;
+    private List<Record> records = new ArrayList<>();
     private ByteString metaData;
 
     public ByteString getNameSpace() {

@@ -1,9 +1,7 @@
 package com.authicate.models;
 
-import com.authicate.Openchain;
-import com.authicate.Openchain.Transaction;
-import com.authicate.Openchain.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.authicate.models.Transaction;
 
 /**
  * Created by revanthpobala on 7/21/17.
@@ -25,6 +23,14 @@ public class TransactionData {
 
     @JsonProperty("mutation_hash")
     public String mutationHash;
+
+    public TransactionData(Transaction transaction, Mutation mutation, String transactionHash, String mutationHash) {
+        this.transaction = transaction;
+        this.mutation = mutation;
+        this.transactionHash = transactionHash;
+        this.mutationHash = mutationHash;
+    }
+
 
     public Mutation getMutation() {
         return mutation;

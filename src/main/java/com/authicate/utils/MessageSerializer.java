@@ -1,15 +1,18 @@
 package com.authicate.utils;
 
-import com.authicate.Openchain;
 import com.authicate.Openchain.Mutation;
+import com.authicate.Openchain.Record;
+import com.authicate.Openchain.RecordValue;
+import com.authicate.Openchain.Transaction;
+import com.authicate.exception.CustomException;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.bitcoinj.core.Sha256Hash;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static com.authicate.Openchain.*;
 
 
 /**
@@ -27,7 +30,6 @@ public class MessageSerializer {
     private static Date epoch = new Date(date);
 
     /**
-     * S
      * @param localMutation
      * @return
      */
@@ -53,12 +55,35 @@ public class MessageSerializer {
      * @return
      * @throws InvalidProtocolBufferException
      */
-    public Mutation deserializeMutation(ByteString data) throws InvalidProtocolBufferException {
+    public com.authicate.models.Mutation deserializeMutation(ByteString data) throws InvalidProtocolBufferException, CustomException {
         Mutation.Builder mutation = Mutation.newBuilder();
         mutation.mergeFrom(data);
-        //mutation.set
-        return null;
+        List<Record> records = mutation.getRecordsList();
+        List<Record> collectionRecords = new ArrayList<>();
+        ByteString nameSpace = ByteString.copyFrom(mutation.getNamespace().toByteArray());
+        ByteString metaData = ByteString.copyFrom(mutation.getMetadata().toByteArray());
+        return new com.authicate.models.Mutation(nameSpace, records, metaData);
+    }
 
+    /**
+     * @param transaction
+     * @return
+     */
+    public static byte[] serializeTransaction(com.authicate.models.Transaction transaction) {
+        Transaction.Builder transactions = Transaction.newBuilder();
+        transactions.setMutation(transaction.getMutation());
+        // Check the timestamp here.
+        //https://github.com/openchain/openchain/blob/3422c96258d0251b7221ef2be1c9f79a7d26ebdb/src/Openchain.Abstractions/MessageSerializer.cs#L92
+        transactions.setTimestamp(transaction.getTimeStamp() - Instant.now().toEpochMilli());
+        transactions.setTransactionMetadata(transaction.getTransactionMetadata());
+        return transactions.build().toByteArray();
+    }
+
+    public static com.authicate.models.Transaction deSerializeTransaction(ByteString data) throws InvalidProtocolBufferException {
+        Transaction.Builder transactions = Transaction.newBuilder();
+        transactions.mergeFrom(data);
+        return new com.authicate.models.Transaction(ByteString.copyFrom(transactions.getMutation().toByteArray()),
+                transactions.getTimestamp(), ByteString.copyFrom(transactions.getTransactionMetadata().toByteArray()));
     }
 
     /**

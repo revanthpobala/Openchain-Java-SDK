@@ -6,7 +6,7 @@ import org.junit.Test;
  * Created by revanthpobala on 7/21/17.
  */
 public class MutationSignerTest {
-    private MutationSigner mutationSigner;
+    private MutationSigner mutationSigner = new MutationSigner();
     @Before
     public void setUp() throws Exception {
         mutationSigner = new MutationSigner();
@@ -19,7 +19,7 @@ public class MutationSignerTest {
 
     @Test
     public void getPublicKey() throws Exception {
-
+        System.out.println(mutationSigner.getPublicKey().toString());
 
     }
 
