@@ -55,9 +55,11 @@ public class APIClientTest {
 
     @Test
     public void getTransactionData() throws Exception {
-        String mutation = "c3c1620b4a1f1ac5c7880de7f8e0abe03f80efba07b753d91dcfe454d40aaa54";
-        byte[] res = {-100, -18, 86, -119, 73, 40, 99, -98};
-        assertThat(apiClient.getTransactionData(mutation).getMutation().getNameSpace(), is(ByteString.copyFrom(res)));
+        APIClient apiClient = new APIClient("http://localhost:8080/");
+        String mutation = "c5ea05088f4bbe09960d8ae5491c688b7ff03bc196ff220876b7cca2cc8f0aa9";
+        //byte[] res = {-100, -18, 86, -119, 73, 40, 99, -98};
+        //assertThat(apiClient.getTransactionData(mutation).getMutation().getNameSpace(), is(ByteString.copyFrom(res)));
+        apiClient.getTransactionData(mutation);
     }
 
     @Test

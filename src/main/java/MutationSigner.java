@@ -3,6 +3,8 @@ import com.google.protobuf.ByteString;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
 
+import static com.authicate.utils.Util.displayBytes;
+
 /**
  * Created by revanthpobala on 7/21/17.
  */
@@ -10,15 +12,8 @@ public class MutationSigner {
 
 
     private MessageSerializer messageSerializer = new MessageSerializer();
-    private static ECKey ecKey = new ECKey();
-
-    public MutationSigner() {
-        ECKey ecKey = new ECKey();
-        this.publicKey = ByteString.copyFrom(ecKey.getPubKey());
-        this.privateKey = ByteString.copyFrom(ecKey.getPrivKeyBytes());
-    }
-
-    public ByteString publicKey;
+    private ECKey ecKey;
+    public ByteString pub_key;
     public ByteString privateKey;
 
 
@@ -26,14 +21,14 @@ public class MutationSigner {
      * @param ecKey
      */
     public MutationSigner(ECKey ecKey) {
-        this.publicKey = ByteString.copyFrom(ecKey.getPubKey());
+        this.pub_key = ByteString.copyFrom(ecKey.getPubKey());
         this.privateKey = ByteString.copyFrom(ecKey.getPrivKeyBytes());
         this.ecKey = ecKey;
     }
 
 
     public ByteString getPublicKey() {
-        return publicKey;
+        return pub_key;
     }
 
     /**
@@ -41,12 +36,12 @@ public class MutationSigner {
      * @return
      */
     public ByteString sign(ByteString mutation) {
-        byte[] hash = messageSerializer.computeHash(mutation.toByteArray());
-        byte[] signatureBytes = ecKey.sign(Sha256Hash.create(hash)).encodeToDER();
-        ByteString signatureBuffer = ByteString.copyFrom(signatureBytes);
+        Sha256Hash hash = messageSerializer.computeHash(mutation.toByteArray());
+        byte[] signatureBytes = ecKey.sign(hash).encodeToDER();
+        System.out.println("verify "+ecKey.verify(hash.getBytes(), signatureBytes));
 
+        ByteString signatureBuffer = ByteString.copyFrom(signatureBytes);
         return signatureBuffer;
     }
-
 
 }

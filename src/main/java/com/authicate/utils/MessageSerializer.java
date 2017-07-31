@@ -1,13 +1,16 @@
 package com.authicate.utils;
 
+import com.authicate.Openchain;
 import com.authicate.Openchain.Mutation;
-import com.authicate.Openchain.Record;
 import com.authicate.Openchain.RecordValue;
 import com.authicate.Openchain.Transaction;
 import com.authicate.exception.CustomException;
+import com.authicate.models.Record;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Sha256Hash;
+import org.bitcoinj.params.Networks;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -33,18 +36,22 @@ public class MessageSerializer {
      * @param localMutation
      * @return
      */
-    public byte[] SerializeMutation(com.authicate.models.Mutation localMutation) {
-        Mutation mutation = null;
+    public byte[] SerializeMutation(com.authicate.models.Mutation localMutation) throws CustomException {
         Mutation.Builder builder = Mutation.newBuilder();
         ByteString namespace = localMutation.getNameSpace();
+        builder.setNamespace(namespace);
         ByteString metadata = localMutation.getMetaData();
+        builder.setMetadata(metadata);
         List<Record> records = localMutation.getRecords();
         for (int i = 0; i < records.size(); i++) {
             if (records.get(i).getValue() != null) {
+                Openchain.Record.Builder recordBuilder = Openchain.Record.newBuilder();
                 ByteString key = records.get(i).getKey();
                 ByteString version = records.get(i).getVersion();
-                RecordValue r = records.get(i).getValue();
-                builder.addRecords(new Record(key, ByteString.copyFrom(r.toByteArray()), version));
+                recordBuilder.setVersion(version);
+                recordBuilder.setValue(RecordValue.newBuilder().setData(records.get(i).getValue()));
+                //ByteString r = records.get(i).getValue();
+                builder.addRecords(recordBuilder);
             }
         }
         return builder.build().toByteArray();
@@ -58,11 +65,15 @@ public class MessageSerializer {
     public com.authicate.models.Mutation deserializeMutation(ByteString data) throws InvalidProtocolBufferException, CustomException {
         Mutation.Builder mutation = Mutation.newBuilder();
         mutation.mergeFrom(data);
-        List<Record> records = mutation.getRecordsList();
+        List<Openchain.Record> records = mutation.getRecordsList();
         List<Record> collectionRecords = new ArrayList<>();
         ByteString nameSpace = ByteString.copyFrom(mutation.getNamespace().toByteArray());
         ByteString metaData = ByteString.copyFrom(mutation.getMetadata().toByteArray());
-        return new com.authicate.models.Mutation(nameSpace, records, metaData);
+        for(Openchain.Record record: records){
+            collectionRecords.add(new Record(nameSpace,record.getValue()!=null ?
+                    ByteString.copyFrom(record.getValue().getData().toByteArray()): null, metaData));
+        }
+        return new com.authicate.models.Mutation(nameSpace, collectionRecords, metaData);
     }
 
     /**
@@ -92,9 +103,11 @@ public class MessageSerializer {
      * @param data
      * @return
      */
-    public static byte[] computeHash(byte[] data) {
-        return Sha256Hash.createDouble(data).getBytes();
+//    public static byte[] computeHash(byte[] data) {
+//        return Sha256Hash.createDouble(data).getBytes();
+//    }
+
+    public static Sha256Hash computeHash(byte[] data) {
+        return Sha256Hash.createDouble(data);
     }
-
-
 }

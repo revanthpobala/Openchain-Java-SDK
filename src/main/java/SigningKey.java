@@ -5,23 +5,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class SigningKey {
 
-    @JsonProperty("pub_key")
-    public String publicKey;
+    //@JsonProperty("pub_key")
+    public String pub_key;
 
-    @JsonProperty("signature")
+    //@JsonProperty("signature")
     public String signature;
 
-    public SigningKey(String publicKey, String signature) {
-        this.publicKey = publicKey;
+    public SigningKey(String pub_key, String signature) {
+        this.pub_key = pub_key;
         this.signature = signature;
     }
 
     public String getPublicKey() {
-        return publicKey;
+        return pub_key;
     }
 
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+    public void setPublicKey(String pub_key) {
+        this.pub_key = pub_key;
     }
 
     public String getSignature() {

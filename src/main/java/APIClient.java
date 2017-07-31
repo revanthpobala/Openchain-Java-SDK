@@ -25,19 +25,14 @@ import java.util.Map;
  * Created by revanthpobala on 7/21/17.
  */
 public class APIClient {
-
-    /**
-     * TODO: Many things.
-     */
+    public APIClient() {
+    }
 
     public ByteString nameSpace;
     private static String urlString = null;
     private static String MEDIA_TYPE = "application/json";
     final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
     private MessageSerializer messageSerializer = new MessageSerializer();
-
-    public APIClient() {
-    }
 
     /**
      * @param baseUrl
@@ -101,9 +96,10 @@ public class APIClient {
      * @throws CustomException
      */
 
-    public Object initialize() throws CustomException {
+    public APIClient initialize() throws CustomException {
         LedgerInfo info = getInfo();
         ByteString namespace = parse(info.getNameSpace());
+        this.setNameSpace(namespace);
         return this;
     }
 
@@ -155,7 +151,6 @@ public class APIClient {
         GetRequest request = Unirest.get(urlString + "query/transaction?format=raw&mutation_hash=" + mutationHashObj.toString())
                 .header("Content-Type", MEDIA_TYPE);
         try {
-            ObjectMapper mapper = new ObjectMapper();
             HttpResponse<JsonNode> response = request.asJson();
             if (response.getStatus() == 200) {
                 String result = response.getBody().getObject().get("raw").toString();
@@ -163,7 +158,7 @@ public class APIClient {
                 Transaction transaction = messageSerializer.deSerializeTransaction(buffer);
                 Mutation mutation = messageSerializer.deserializeMutation(transaction.getMutation());
                 byte[] transactionBuffer = buffer.toByteArray();
-                byte[] transactionHash = messageSerializer.computeHash(transactionBuffer);
+                byte[] transactionHash = messageSerializer.computeHash(transactionBuffer).getBytes();
                 TransactionData data = new TransactionData(transaction, mutation, transaction.getMutation().toString(),
                         ByteString.copyFrom(transactionHash).toString());
                 return data;
@@ -186,16 +181,18 @@ public class APIClient {
      */
     public TransactionData submitTransactionData(ByteString mutation, List<SigningKey> signatures) throws CustomException {
         Map<String, Object> data = new HashMap<>();
-        data.put("mutation", mutation.toString());
-        data.put("signatures", signatures);
+        data.put("mutation", bytesToHex(mutation.toByteArray()));
+        data.put("signatures",  signatures);
         try {
             String body = new ObjectMapper().writeValueAsString(data);
             RequestBodyEntity request = Unirest.post(urlString + "submit/")
                     .header("Content-Type", MEDIA_TYPE).body(body);
-
-            request.getBody();
+            System.out.println(request.getBody());
+            System.out.println(request.asJson().getBody());
         } catch (IOException e) {
             throw new CustomException("Bad Input" + e);
+        } catch (UnirestException e) {
+            e.printStackTrace();
         }
 
         return null;
@@ -212,7 +209,7 @@ public class APIClient {
             hexChars[j * 2] = hexArray[v >>> 4];
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
-        return new String(hexChars);
+        return new String(hexChars).toLowerCase();
     }
 
 }

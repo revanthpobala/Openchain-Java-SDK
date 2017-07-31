@@ -1,6 +1,6 @@
-import com.authicate.Openchain.Record;
 import com.authicate.exception.CustomException;
 import com.authicate.models.Mutation;
+import com.authicate.models.Record;
 import com.authicate.models.TransactionData;
 import com.authicate.utils.MessageSerializer;
 import com.google.protobuf.ByteString;
@@ -15,15 +15,16 @@ import java.util.List;
  * Created by revanthpobala on 7/27/17.
  */
 public class TransactionBuilder {
-    private APIClient apiClient = new APIClient();
-    private List<Record> records;
+
+
+    private APIClient apiClient;
+    private List<Record> records = new ArrayList<>();
     private List<MutationSigner> mutationSigners;
     private ByteString metaData;
     ObjectMapper mapper = new ObjectMapper();
     private MessageSerializer messageSerializer = new MessageSerializer();
 
     /**
-     *
      * @param apiClient
      * @throws CustomException
      */
@@ -34,33 +35,30 @@ public class TransactionBuilder {
         this.apiClient = apiClient;
         this.metaData = ByteString.EMPTY;
         this.mutationSigners = new ArrayList<>();
-        this.records = new ArrayList<>();
     }
 
     /**
-     *
      * @param key
      * @param value
      * @param version
      * @return
      * @throws IOException
      */
-    public TransactionBuilder addRecord(ByteString key, Object value, ByteString version) throws IOException {
-        ByteString recordValue = null;
-
+    public TransactionBuilder addRecord(ByteString key, Object value, ByteString version) throws IOException, CustomException {
+        ByteString recordValue;
         if (value.getClass().isInstance(ByteString.class)) {
             recordValue = (ByteString) value;
         } else {
             // C# equivalent code  recordValue = new ByteString(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(value)));
             recordValue = ByteString.copyFrom(Charset.forName("UTF-8").encode(mapper.writeValueAsString(value)));
         }
+
         Record newRecord = new Record(key, recordValue, version);
-        records.add(newRecord);
+        this.records.add(newRecord);
         return this;
     }
 
     /**
-     *
      * @param data
      * @return
      * @throws IOException
@@ -71,7 +69,6 @@ public class TransactionBuilder {
     }
 
     /**
-     *
      * @return
      */
     public TransactionBuilder addAccountRecord() {
@@ -79,7 +76,6 @@ public class TransactionBuilder {
     }
 
     /**
-     *
      * @param key
      * @return
      */
@@ -89,17 +85,15 @@ public class TransactionBuilder {
     }
 
     /**
-     *
      * @return
      * @throws CustomException
      */
     public ByteString build() throws CustomException {
-        Mutation mutation = new com.authicate.models.Mutation(apiClient.getNameSpace(), records, metaData);
+        Mutation mutation = new com.authicate.models.Mutation(apiClient.getNameSpace(), this.records, metaData);
         return ByteString.copyFrom(messageSerializer.SerializeMutation(mutation));
     }
 
     /**
-     *
      * @return
      * @throws CustomException
      */
@@ -107,7 +101,8 @@ public class TransactionBuilder {
         ByteString mutation = build();
         List<SigningKey> signatures = new ArrayList<>();
         for (MutationSigner ms : mutationSigners) {
-            signatures.add(new SigningKey(ms.getPublicKey().toString(), ms.sign(mutation).toString()));
+            signatures.add(new SigningKey(apiClient.bytesToHex(ms.getPublicKey().toByteArray()),
+                    apiClient.bytesToHex(ms.sign(mutation).toByteArray())));
         }
         return apiClient.submitTransactionData(mutation, signatures);
     }

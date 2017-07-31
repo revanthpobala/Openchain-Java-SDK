@@ -1,10 +1,8 @@
 package com.authicate.models;
 
-import com.authicate.Openchain.*;
 import com.authicate.exception.CustomException;
 import com.google.protobuf.ByteString;
-import org.jetbrains.annotations.Contract;
-
+import com.authicate.models.Record;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -67,11 +65,6 @@ public class Mutation {
         this.records = records;
         this.metaData = metaData;
 
-        for (Record record : records) {
-            if (record.getSerializedSize() == 0) {
-                throw new CustomException("Something is wrong with the records");
-            }
-        }
         HashSet<ByteString> keys = new HashSet<ByteString>();
         for (Record record : records) {
             if (keys.contains(record.getKey())) {
