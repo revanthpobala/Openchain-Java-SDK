@@ -1,8 +1,9 @@
+import com.authicate.client.APIClient;
+import com.authicate.client.MutationSigner;
+import com.authicate.client.TransactionBuilder;
 import com.google.protobuf.ByteString;
 import org.bitcoinj.core.ECKey;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by revanthpobala on 7/30/17.

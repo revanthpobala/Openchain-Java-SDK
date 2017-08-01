@@ -1,3 +1,5 @@
+package com.authicate.client;
+
 import com.authicate.exception.CustomException;
 import com.authicate.models.LedgerInfo;
 import com.authicate.models.Mutation;
@@ -15,6 +17,7 @@ import com.mashape.unirest.request.body.RequestBodyEntity;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -182,11 +185,18 @@ public class APIClient {
     public TransactionData submitTransactionData(ByteString mutation, List<SigningKey> signatures) throws CustomException {
         Map<String, Object> data = new HashMap<>();
         data.put("mutation", bytesToHex(mutation.toByteArray()));
-        data.put("signatures",  signatures);
+        data.put("signatures", signatures);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("mutation", bytesToHex(mutation.toByteArray()));
+        JSONObject childJsonObject = new JSONObject();
+        childJsonObject.put("signature",signatures.get(0).getSignature());
+        childJsonObject.put("pub_key", signatures.get(0).getPublicKey());
+        jsonObject.put("signatures", childJsonObject);
+        System.out.println(jsonObject.toString());
         try {
             String body = new ObjectMapper().writeValueAsString(data);
             RequestBodyEntity request = Unirest.post(urlString + "submit/")
-                    .header("Content-Type", MEDIA_TYPE).body(body);
+                    .header("Content-Type", MEDIA_TYPE).body(jsonObject);
             System.out.println(request.getBody());
             System.out.println(request.asJson().getBody());
         } catch (IOException e) {

@@ -1,3 +1,5 @@
+package com.authicate.client;
+
 import com.authicate.exception.CustomException;
 import com.authicate.models.Mutation;
 import com.authicate.models.Record;

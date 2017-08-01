@@ -1,9 +1,8 @@
-import com.authicate.utils.Util;
+import com.authicate.client.MutationSigner;
 import com.google.protobuf.ByteString;
 import org.bitcoinj.core.ECKey;
 import org.junit.Test;
 
-import static com.authicate.utils.Util.displayBytes;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 

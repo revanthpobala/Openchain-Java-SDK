@@ -8,9 +8,7 @@ import com.authicate.exception.CustomException;
 import com.authicate.models.Record;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
-import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Sha256Hash;
-import org.bitcoinj.params.Networks;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -69,14 +67,17 @@ public class MessageSerializer {
         List<Record> collectionRecords = new ArrayList<>();
         ByteString nameSpace = ByteString.copyFrom(mutation.getNamespace().toByteArray());
         ByteString metaData = ByteString.copyFrom(mutation.getMetadata().toByteArray());
-        for(Openchain.Record record: records){
-            collectionRecords.add(new Record(nameSpace,record.getValue()!=null ?
-                    ByteString.copyFrom(record.getValue().getData().toByteArray()): null, metaData));
+        for (Openchain.Record record : records) {
+            collectionRecords.add(new Record(nameSpace, record.getValue() != null ?
+                    ByteString.copyFrom(record.getValue().getData().toByteArray()) : null, metaData));
         }
         return new com.authicate.models.Mutation(nameSpace, collectionRecords, metaData);
     }
 
     /**
+     * // Check the timestamp here.
+     * //https://github.com/openchain/openchain/blob/3422c96258d0251b7221ef2be1c9f79a7d26ebdb/src/Openchain.Abstractions/MessageSerializer.cs#L92
+     *
      * @param transaction
      * @return
      */
@@ -103,10 +104,6 @@ public class MessageSerializer {
      * @param data
      * @return
      */
-//    public static byte[] computeHash(byte[] data) {
-//        return Sha256Hash.createDouble(data).getBytes();
-//    }
-
     public static Sha256Hash computeHash(byte[] data) {
         return Sha256Hash.createDouble(data);
     }

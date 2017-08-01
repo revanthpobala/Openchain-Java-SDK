@@ -1,3 +1,5 @@
+package com.authicate.client;
+
 import com.authicate.utils.MessageSerializer;
 import com.google.protobuf.ByteString;
 import org.bitcoinj.core.ECKey;
@@ -38,8 +40,8 @@ public class MutationSigner {
     public ByteString sign(ByteString mutation) {
         Sha256Hash hash = messageSerializer.computeHash(mutation.toByteArray());
         byte[] signatureBytes = ecKey.sign(hash).encodeToDER();
+        System.out.println("verify bytes "+ecKey.verify(hash.getBytes(), signatureBytes));
         System.out.println("verify "+ecKey.verify(hash.getBytes(), signatureBytes));
-
         ByteString signatureBuffer = ByteString.copyFrom(signatureBytes);
         return signatureBuffer;
     }

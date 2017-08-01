@@ -1,12 +1,11 @@
+import com.authicate.client.APIClient;
 import com.authicate.exception.CustomException;
 import com.authicate.models.LedgerInfo;
 import com.authicate.models.TransactionData;
-import com.google.protobuf.ByteString;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.CoreMatchers.is;

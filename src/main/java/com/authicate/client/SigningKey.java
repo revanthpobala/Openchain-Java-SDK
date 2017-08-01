@@ -1,3 +1,5 @@
+package com.authicate.client;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -5,10 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class SigningKey {
 
-    //@JsonProperty("pub_key")
+    @JsonProperty("pub_key")
     public String pub_key;
 
-    //@JsonProperty("signature")
+    @JsonProperty("signature")
     public String signature;
 
     public SigningKey(String pub_key, String signature) {
