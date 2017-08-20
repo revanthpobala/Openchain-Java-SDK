@@ -1,11 +1,9 @@
-package com.authicate.utils;
+package com.revanth.openchain.utils;
 
-import com.authicate.Openchain;
-import com.authicate.Openchain.Mutation;
-import com.authicate.Openchain.RecordValue;
-import com.authicate.Openchain.Transaction;
-import com.authicate.exception.CustomException;
-import com.authicate.models.Record;
+import com.revanth.openchain.Openchain;
+import com.revanth.openchain.Openchain.RecordValue;
+import com.revanth.openchain.exception.CustomException;
+import com.revanth.openchain.models.Record;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.bitcoinj.core.Sha256Hash;
@@ -34,7 +32,7 @@ public class MessageSerializer {
      * @param localMutation
      * @return
      */
-    public byte[] SerializeMutation(com.authicate.models.Mutation localMutation) throws CustomException {
+    public byte[] SerializeMutation(com.revanth.openchain.models.Mutation localMutation) throws CustomException {
         Mutation.Builder builder = Mutation.newBuilder();
         ByteString namespace = localMutation.getNameSpace();
         builder.setNamespace(namespace);
@@ -60,7 +58,7 @@ public class MessageSerializer {
      * @return
      * @throws InvalidProtocolBufferException
      */
-    public com.authicate.models.Mutation deserializeMutation(ByteString data) throws InvalidProtocolBufferException, CustomException {
+    public com.revanth.openchain.models.Mutation deserializeMutation(ByteString data) throws InvalidProtocolBufferException, CustomException {
         Mutation.Builder mutation = Mutation.newBuilder();
         mutation.mergeFrom(data);
         List<Openchain.Record> records = mutation.getRecordsList();
@@ -71,7 +69,7 @@ public class MessageSerializer {
             collectionRecords.add(new Record(nameSpace, record.getValue() != null ?
                     ByteString.copyFrom(record.getValue().getData().toByteArray()) : null, metaData));
         }
-        return new com.authicate.models.Mutation(nameSpace, collectionRecords, metaData);
+        return new com.revanth.openchain.models.Mutation(nameSpace, collectionRecords, metaData);
     }
 
     /**
@@ -81,7 +79,7 @@ public class MessageSerializer {
      * @param transaction
      * @return
      */
-    public static byte[] serializeTransaction(com.authicate.models.Transaction transaction) {
+    public static byte[] serializeTransaction(Transaction transaction) {
         Transaction.Builder transactions = Transaction.newBuilder();
         transactions.setMutation(transaction.getMutation());
         // Check the timestamp here.
@@ -91,10 +89,10 @@ public class MessageSerializer {
         return transactions.build().toByteArray();
     }
 
-    public static com.authicate.models.Transaction deSerializeTransaction(ByteString data) throws InvalidProtocolBufferException {
+    public static Transaction deSerializeTransaction(ByteString data) throws InvalidProtocolBufferException {
         Transaction.Builder transactions = Transaction.newBuilder();
         transactions.mergeFrom(data);
-        return new com.authicate.models.Transaction(ByteString.copyFrom(transactions.getMutation().toByteArray()),
+        return new Transaction(ByteString.copyFrom(transactions.getMutation().toByteArray()),
                 transactions.getTimestamp(), ByteString.copyFrom(transactions.getTransactionMetadata().toByteArray()));
     }
 

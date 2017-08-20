@@ -1,4 +1,4 @@
-package com.authicate.client;
+package com.revanth.openchain.client;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

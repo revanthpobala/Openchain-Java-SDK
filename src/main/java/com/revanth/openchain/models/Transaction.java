@@ -1,4 +1,4 @@
-package com.authicate.models;
+package com.revanth.openchain.models;
 
 import com.google.protobuf.ByteString;
 

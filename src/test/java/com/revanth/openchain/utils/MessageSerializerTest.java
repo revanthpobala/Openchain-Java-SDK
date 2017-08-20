@@ -1,10 +1,7 @@
-package com.authicate.utils;
+package com.revanth.openchain.utils;
 
-import com.google.protobuf.ByteString;
 import org.junit.After;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by revanthpobala on 7/29/17.

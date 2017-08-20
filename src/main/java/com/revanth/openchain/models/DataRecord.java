@@ -1,6 +1,6 @@
-package com.authicate.models;
+package com.revanth.openchain.models;
 
-import com.authicate.Openchain.Record;
+import com.revanth.openchain.Openchain.Record;
 import com.google.protobuf.ByteString;
 
 /**

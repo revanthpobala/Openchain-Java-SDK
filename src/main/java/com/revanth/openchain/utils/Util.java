@@ -1,8 +1,8 @@
-package com.authicate.utils;
+package com.revanth.openchain.utils;
 
-import com.authicate.client.APIClient;
-import com.authicate.exception.CustomException;
-import com.authicate.models.Mutation;
+import com.revanth.openchain.client.APIClient;
+import com.revanth.openchain.exception.CustomException;
+import com.revanth.openchain.models.Mutation;
 import com.google.protobuf.ByteString;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -74,8 +74,6 @@ public class Util {
             parsedMutation = parse(jsonObject.getString("mutation"));
             List<SignatureEvidence> authentication = new ArrayList<>();
             JSONObject evidence = new JSONObject(jsonObject.get("signatures").toString());
-            System.out.println(evidence.get("pub_key"));
-            System.out.println(evidence.get("signature"));
 //            if (!(evidence != null && evidence.get("pub_key").getClass().isInstance(JSONObject.class)
 //                    && evidence.get("signature").getClass().isInstance(JSONObject.class))) {
 //                System.out.println("Not a valid json");

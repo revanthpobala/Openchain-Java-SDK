@@ -1,6 +1,6 @@
-package com.authicate.models;
+package com.revanth.openchain.models;
 
-import com.authicate.exception.CustomException;
+import com.revanth.openchain.exception.CustomException;
 import com.google.protobuf.ByteString;
 
 /**

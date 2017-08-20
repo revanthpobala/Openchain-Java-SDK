@@ -1,11 +1,9 @@
-package com.authicate.client;
+package com.revanth.openchain.client;
 
-import com.authicate.utils.MessageSerializer;
+import com.revanth.openchain.utils.MessageSerializer;
 import com.google.protobuf.ByteString;
 import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.Sha256Hash;
-
-import static com.authicate.utils.Util.displayBytes;
 
 /**
  * Created by revanthpobala on 7/21/17.

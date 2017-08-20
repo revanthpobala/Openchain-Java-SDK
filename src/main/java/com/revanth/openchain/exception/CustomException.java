@@ -1,4 +1,4 @@
-package com.authicate.exception;
+package com.revanth.openchain.exception;
 
 /**
  * Created by revanthpobala on 7/23/17.

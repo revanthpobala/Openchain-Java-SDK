@@ -1,8 +1,8 @@
-package com.authicate.models;
+package com.revanth.openchain.models;
 
-import com.authicate.exception.CustomException;
+import com.revanth.openchain.exception.CustomException;
 import com.google.protobuf.ByteString;
-import com.authicate.models.Record;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

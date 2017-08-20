@@ -1,7 +1,7 @@
-import com.authicate.client.APIClient;
-import com.authicate.exception.CustomException;
-import com.authicate.models.LedgerInfo;
-import com.authicate.models.TransactionData;
+import com.revanth.openchain.client.APIClient;
+import com.revanth.openchain.exception.CustomException;
+import com.revanth.openchain.models.LedgerInfo;
+import com.revanth.openchain.models.TransactionData;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

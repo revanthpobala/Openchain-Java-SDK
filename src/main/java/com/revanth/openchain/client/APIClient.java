@@ -1,11 +1,11 @@
-package com.authicate.client;
+package com.revanth.openchain.client;
 
-import com.authicate.exception.CustomException;
-import com.authicate.models.LedgerInfo;
-import com.authicate.models.Mutation;
-import com.authicate.models.Transaction;
-import com.authicate.models.TransactionData;
-import com.authicate.utils.MessageSerializer;
+import com.revanth.openchain.exception.CustomException;
+import com.revanth.openchain.models.LedgerInfo;
+import com.revanth.openchain.models.Mutation;
+import com.revanth.openchain.models.Transaction;
+import com.revanth.openchain.models.TransactionData;
+import com.revanth.openchain.utils.MessageSerializer;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.mashape.unirest.http.HttpResponse;

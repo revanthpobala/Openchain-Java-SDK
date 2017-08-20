@@ -1,7 +1,6 @@
-package com.authicate.models;
+package com.revanth.openchain.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.authicate.models.Transaction;
 
 /**
  * Created by revanthpobala on 7/21/17.

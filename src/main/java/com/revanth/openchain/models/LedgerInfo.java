@@ -1,4 +1,4 @@
-package com.authicate.models;
+package com.revanth.openchain.models;
 
 /**
  * Created by revanthpobala on 7/21/17.

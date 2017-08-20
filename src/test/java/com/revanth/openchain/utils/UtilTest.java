@@ -1,8 +1,6 @@
-package com.authicate.utils;
+package com.revanth.openchain.utils;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by revanthpobala on 7/31/17.

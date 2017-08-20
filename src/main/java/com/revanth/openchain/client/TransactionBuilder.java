@@ -1,10 +1,10 @@
-package com.authicate.client;
+package com.revanth.openchain.client;
 
-import com.authicate.exception.CustomException;
-import com.authicate.models.Mutation;
-import com.authicate.models.Record;
-import com.authicate.models.TransactionData;
-import com.authicate.utils.MessageSerializer;
+import com.revanth.openchain.exception.CustomException;
+import com.revanth.openchain.models.Mutation;
+import com.revanth.openchain.models.Record;
+import com.revanth.openchain.models.TransactionData;
+import com.revanth.openchain.utils.MessageSerializer;
 import com.google.protobuf.ByteString;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -91,7 +91,7 @@ public class TransactionBuilder {
      * @throws CustomException
      */
     public ByteString build() throws CustomException {
-        Mutation mutation = new com.authicate.models.Mutation(apiClient.getNameSpace(), this.records, metaData);
+        Mutation mutation = new Mutation(apiClient.getNameSpace(), this.records, metaData);
         return ByteString.copyFrom(messageSerializer.SerializeMutation(mutation));
     }
 

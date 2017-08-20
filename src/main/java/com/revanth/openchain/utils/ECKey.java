@@ -1,4 +1,4 @@
-package com.authicate.utils;
+package com.revanth.openchain.utils;
 
 import org.bouncycastle.asn1.x9.ECNamedCurveTable;
 import org.bouncycastle.asn1.x9.X9ECParameters;
