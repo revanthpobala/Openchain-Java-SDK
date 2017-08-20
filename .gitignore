@@ -17,6 +17,7 @@
 
 .idea
 
+
 # Gradle:
 .idea/**/gradle.xml
 .idea/**/libraries
@@ -51,3 +52,5 @@ crashlytics-build.properties
 fabric.properties
 target/generated-sources/
 target/generated-test-sources/
+.idea
+.idea/*
